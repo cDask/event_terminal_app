@@ -1,6 +1,6 @@
 require_relative "../lib/events"
 
-describe 'Data' do
+describe 'Events' do
   before(:each) do
     @data = Events.new
   end
@@ -13,12 +13,15 @@ describe 'Data' do
     expect(@data.events).to eq({})
   end
 
-  it "should add an event" do
-    expect(@data.add_event("Main Event")).to eq("Main Event")
+  it "should add an event to the event hash" do
+    event_title = "Main Event"
+    @data.add_event(event_title)
+    expect(@data.events[event_title]).to eq({})
   end
 
-  it "should add an event to the event hash" do
-    @data.add_event("Main Event")
-    expect(@data.events.last).to eq({})
+  it "should be able to find a specific event" do
+    event_title = "Test Event"
+    @data.add_event(event_title)
+    expect(@data.retrieve(event_title)).to eq({})
   end
 end
