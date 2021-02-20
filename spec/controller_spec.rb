@@ -79,23 +79,31 @@ describe EventController do
     
     it 'should check that start time is before finish time' do
       talk_information[2] = '10:00am'
-      talk_informattion[3] = '9:00am'
+      talk_information[3] = '9:00am'
       expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
-    it 'should check that start time is not within another talk' do
+    xit 'should check that start time is not within another talk' do
       talk_information[2] = 'not_time_format'
       expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
-    it 'should check that finish time is not within another talk' do
+    xit 'should check that finish time is not within another talk' do
       talk_information[2] = 'not_time_format'
       expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
-    it 'should check that another event is not taking place within the start and finish time of a talk' do
+    xit 'should check that another event is not taking place within the start and finish time of a talk' do
       talk_information[2] = 'not_time_format'
       expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+    end
+  end
+
+  describe 'Methods' do
+    context 'convert_time method' do
+      it 'should convert time from HH:MMam to time object' do
+        expect(@controller.convert_time('10:00pm')).to eq(Time.new(2021,02,21,22,00))
+      end
     end
   end
 end

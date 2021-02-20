@@ -11,27 +11,6 @@ class EventController
     @events = Events.new
   end
 
-  def create_event(name)
-    raise EventAlreadyExists unless @events.retrieve(name).nil?
-
-    @events.add_event(name)
-  end
-
-  def create_speaker(name)
-    raise SpeakerAlreadyExists if @events.check_speaker?(name)
-
-    @events.add_speaker(name)
-  end
-
-  def create_talk(talk_data)
-    event_name, talk_name, start_time, finish_time, speaker = talk_data
-    raise InvalidTalkInput, 'That event does not exist' if @events.retrieve(event_name).nil?
-    raise InvalidTalkInput, 'That speaker does not exist' unless @events.speakers.include?(speaker)
-
-    check_time(start_time, finish_time)
-    @events.add_talk(event_name, { title: talk_name, start_time: start_time, finish_time: finish_time, speaker: speaker })
-  end
-
   def run_app
     command = process_arguments
     command ||= request_command
@@ -64,6 +43,47 @@ class EventController
     else
       raise InvalidCommandError
     end
+  end
+
+  def create_event(name)
+    raise EventAlreadyExists unless @events.retrieve(name).nil?
+
+    @events.add_event(name)
+  end
+
+  def create_speaker(name)
+    raise SpeakerAlreadyExists if @events.check_speaker?(name)
+
+    @events.add_speaker(name)
+  end
+
+  def create_talk(talk_data)
+    event_name, talk_name, start_time, finish_time, speaker = talk_data
+    raise InvalidTalkInput, 'That event does not exist' if @events.retrieve(event_name).nil?
+    raise InvalidTalkInput, 'That speaker does not exist' unless @events.speakers.include?(speaker)
+
+    check_time(start_time, finish_time)
+    @events.add_talk(event_name, { title: talk_name, start_time: start_time, finish_time: finish_time, speaker: speaker })
+  end
+
+  def check_time(start, finish)
+    time_format = /b((1[0-2]|0?[1-9]):[0-5][0-9](am|pm))/
+    raise InvalidTalkInput, 'Invalid time format must be HH:MMam/pm' unless start.match?(time_format) || finish.match?(time_format)
+
+    start_time = convert_time(start)
+    finish_time = convert_time(finish)
+    if finish_time < start_time
+      raise InvalidTalkInput, 'Start time has to be before finish time.'
+    end
+  end
+
+  def convert_time(time)
+    # time will be in HH:MMam/pm format
+    time_array = time.split(/am|pm/)[0].split(':')
+    hours = time.include?('pm') ? time_array[0].to_i + 12 : time_array[0].to_i
+    minutes = time_array[1].to_i
+    # Using 21-02-2021 as the place holder date
+    Time.new(2021,02,21,hours,minutes)
   end
 
   def process_arguments
