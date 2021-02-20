@@ -1,6 +1,7 @@
 require_relative 'events'
 require_relative 'errors/invalid_command_error'
 require_relative 'errors/event_already_exists'
+require_relative 'errors/speaker_already_exists'
 
 class EventController
   attr_reader :events
@@ -13,6 +14,12 @@ class EventController
     raise EventAlreadyExists unless @events.retrieve(name).nil?
 
     @events.add_event(name)
+  end
+
+  def create_speaker(name)
+    raise SpeakerAlreadyExists if @events.check_speaker?(name)
+
+    @events.add_speaker(name)
   end
 
   def run_app
@@ -39,9 +46,9 @@ class EventController
   def process_create_command(command, information)
     case command
     when 'EVENT'
-      create_event(information)
+      create_event(information[0])
     when 'SPEAKER'
-      create_speaker(information)
+      create_speaker(information[0])
     when 'TALK'
       create_talk(information)
     else
@@ -65,5 +72,9 @@ class EventController
   def check_data(command, command_arguments)
     command_list = { 'TALK' => 5, 'EVENT' => 1, 'SPEAKER' => 1 }
     raise InvalidCommandError, 'Invalid number of arguments' if command_list[command] != command_arguments
+  end
+
+  def close
+    @events.save_data
   end
 end

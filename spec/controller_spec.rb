@@ -38,4 +38,18 @@ describe EventController do
       expect { @controller.create_event(event_name) }.to raise_error(EventAlreadyExists)
     end
   end
+
+  context 'Speaker' do
+    it 'should add a speaker' do
+      speaker_name = 'Test Speaker'
+      @controller.create_speaker(speaker_name)
+      expect(@controller.events.speakers).to include(speaker_name)
+    end
+
+    it 'should raise an error if speaker already exists' do
+      speaker_name = 'Test Speaker'
+      @controller.create_speaker(speaker_name)
+      expect { @controller.create_speaker(speaker_name)}.to raise_error(SpeakerAlreadyExists)
+    end
+  end
 end

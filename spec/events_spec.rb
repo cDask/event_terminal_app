@@ -1,7 +1,7 @@
 require_relative '../lib/events'
 require 'json'
 
-describe 'Events' do
+describe Events do
   before(:each) do
     @data = Events.new
   end
@@ -26,10 +26,18 @@ describe 'Events' do
     expect(@data.retrieve(event_title)).to eq({})
   end
 
+  context 'Speakers' do
+    it 'should add a speaker to speaker array' do
+      speaker_name = 'John'
+      @data.add_speaker(speaker_name)
+      expect(@data.speakers).to include(speaker_name)
+    end
+  end
+
   context 'JSON storage' do
     it 'should read the information in a json data file' do
       data = JSON.parse(File.read('./data/event_data.json'))
-      expect(@data.events).to include(data)
+      expect(@data.events).to include(data['events'])
     end
 
     # it 'should write to json data file at the end of the program' do

@@ -1,10 +1,12 @@
 require 'json'
 
 class Events
-  attr_accessor :events
+  attr_reader :events, :speakers
 
   def initialize
-    @events = load_data
+    response = load_data
+    @events = response['events']
+    @speakers = response['speakers']
   end
 
   def add_event(title)
@@ -19,12 +21,20 @@ class Events
     JSON.parse(File.read('./data/event_data.json'))
   rescue StandardError
     File.open('./data/event_data.json', 'w') do |f|
-      f.write({}.to_json)
+      f.write({ events: {}, speakers: [] }.to_json)
     end
     retry
   end
 
   def save_data
-    File.write('./data/event_data.json', @events.to_json, mode: 'w')
+    File.write('./data/event_data.json', { events: @events, speakers: @speakers }.to_json, mode: 'w')
+  end
+
+  def check_speaker?(name)
+    @speakers.include?(name)
+  end
+
+  def add_speaker(name)
+    @speakers << name
   end
 end
