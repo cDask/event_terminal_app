@@ -56,42 +56,44 @@ describe EventController do
   context 'Talks' do 
     before(:each) do
       @controller.create_event('test_event')
-      @controller.create_event('test_speaker')
+      @controller.create_speaker('test_speaker')
     end
     let(:talk_information) {['test_event', 'Test Talk', '9:00am', '10:00am', 'test_speaker']}
 
     it 'should check that event exists' do
       talk_information[0] = 'no_event'
-      expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+      pp @controller.events.retrieve('no_event')
+      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
-
+    
     it 'should check that speaker exists' do
-      talk_information.last = 'no_speaker'
-      expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+      pp talk_information
+      talk_information[4] = 'no_speaker'
+      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
     it 'should check that start time and finish time are in right format' do
       talk_information[2] = 'not_time_format'
-      expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
     
     it 'should check that start time is before finish time' do
       talk_information[2] = '10:00am'
       talk_informattion[3] = '9:00am'
-      expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
-    xit 'should check that start time is not within another talk' do
+    it 'should check that start time is not within another talk' do
       talk_information[2] = 'not_time_format'
-      expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
-    xit 'should check that finish time is not within another talk' do
+    it 'should check that finish time is not within another talk' do
       talk_information[2] = 'not_time_format'
-      expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
-    xit 'should check that another event is not taking place within the start and finish time of a talk' do
+    it 'should check that another event is not taking place within the start and finish time of a talk' do
       talk_information[2] = 'not_time_format'
       expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
     end

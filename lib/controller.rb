@@ -2,6 +2,7 @@ require_relative 'events'
 require_relative 'errors/invalid_command_error'
 require_relative 'errors/event_already_exists'
 require_relative 'errors/speaker_already_exists'
+require_relative 'errors/invalid_talk_input'
 
 class EventController
   attr_reader :events
@@ -20,6 +21,15 @@ class EventController
     raise SpeakerAlreadyExists if @events.check_speaker?(name)
 
     @events.add_speaker(name)
+  end
+
+  def create_talk(talk_data)
+    event_name, talk_name, start_time, finish_time, speaker = talk_data
+    raise InvalidTalkInput, 'That event does not exist' if @events.retrieve(event_name).nil?
+    raise InvalidTalkInput, 'That speaker does not exist' unless @events.speakers.include?(speaker)
+
+    check_time(start_time, finish_time)
+    @events.add_talk(event_name, { title: talk_name, start_time: start_time, finish_time: finish_time, speaker: speaker })
   end
 
   def run_app
