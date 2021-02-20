@@ -23,7 +23,7 @@ class EventController
         begin
           command = @view.request_command
           if command[0] == 'EXIT'
-            @events.save_data
+            close
             exit
           end
           process_command(command)
@@ -44,7 +44,7 @@ class EventController
     when 'PRINT'
       raise InvalidCommandError if second != 'TALKS'
 
-      print_event(information)
+      print_event(information[0])
     else
       raise InvalidCommandError
     end
@@ -131,6 +131,13 @@ class EventController
   def check_data(command, command_arguments)
     command_list = { 'TALK' => 5, 'EVENT' => 1, 'SPEAKER' => 1 }
     raise InvalidCommandError, 'Invalid number of arguments' if command_list[command] != command_arguments
+  end
+
+  def print_event(event_name)
+    event = @events.retrieve(event_name)
+    raise StandardError, 'That event does not exist' unless event
+
+    @view.print_event(event)
   end
 
   def close

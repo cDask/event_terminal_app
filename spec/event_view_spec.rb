@@ -8,6 +8,6 @@ describe EventView do
   end
 
   it 'should output an creation message' do
-    expect { subject.confirm_creation('talk name','talk') }.to output("----------\ntalk: talk name CREATED\n----------\n").to_stdout
+    expect { subject.confirm_creation('talk name', 'talk') }.to output("----------\ntalk: talk name CREATED\n----------\n").to_stdout
   end
 end

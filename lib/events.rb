@@ -19,7 +19,17 @@ class Events
   end
 
   def load_data(data_path)
-    JSON.parse(File.read(data_path))
+    response = JSON.parse(File.read(data_path))
+    pp response
+    response['events'].each { |event| 
+      event.each do |talk| 
+        talk['start_time'] = Time.parse(talk['start_time'])
+        talk['finish_time'] = Time.parse(talk['finish_time'])
+      end
+      pp event
+      pp event[0]['start_time'].class
+    }
+    return response
   rescue StandardError
     File.open(data_path, 'w') do |f|
       f.write({ events: {}, speakers: [] }.to_json)

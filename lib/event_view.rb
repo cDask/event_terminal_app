@@ -15,4 +15,13 @@ class EventView
   puts "#{data_type}: #{name} CREATED"
   puts '-' * 10
  end
+
+ def print_event(event)
+  puts '-' * 20
+  event.each do |talk|
+    puts "#{talk['start_time'].strftime("%I:%M%p")} - #{talk['finish_time'].strftime("%I:%M%p")}" 
+    puts "\t #{talk['title']} presented by #{talk['speaker']}"
+  end
+  puts '-' * 20
+ end
 end

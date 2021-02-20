@@ -49,58 +49,58 @@ describe EventController do
     it 'should raise an error if speaker already exists' do
       speaker_name = 'Test Speaker'
       @controller.create_speaker(speaker_name)
-      expect { @controller.create_speaker(speaker_name)}.to raise_error(SpeakerAlreadyExists)
+      expect { @controller.create_speaker(speaker_name) }.to raise_error(SpeakerAlreadyExists)
     end
   end
 
-  context 'Talks' do 
+  context 'Talks' do
     before(:each) do
       @controller.create_event('test_event')
       @controller.create_speaker('test_speaker')
     end
-    let(:talk_information) {['test_event', 'Test Talk', '9:00am', '10:00am', 'test_speaker']}
+    let(:talk_information) { ['test_event', 'Test Talk', '9:00am', '10:00am', 'test_speaker'] }
 
     it 'should check that event exists' do
       talk_information[0] = 'no_event'
-      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
+      expect { @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
-    
+
     it 'should check that speaker exists' do
       talk_information[4] = 'no_speaker'
-      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
+      expect { @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
 
     it 'should check that start time and finish time are in right format' do
       talk_information[2] = 'not_time_format'
-      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
+      expect { @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
-    
+
     it 'should check that start time is before finish time' do
       talk_information[2] = '10:00am'
       talk_information[3] = '9:00am'
-      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
+      expect { @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
 
     it 'should check that start time is not within another talk' do
       @controller.create_talk(['test_event', 'Test Talk 2', '8:00am', '9:30am', 'test_speaker'])
-      expect{ @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
+      expect { @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
 
     it 'should check that finish time is not within another talk' do
       @controller.create_talk(['test_event', 'Test Talk 2', '8:00am', '9:30am', 'test_speaker'])
-      expect{ @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
+      expect { @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
 
     it 'should check that another event is not taking place within the start and finish time of a talk' do
       @controller.create_talk(['test_event', 'Test Talk 2', '9:10am', '9:30am', 'test_speaker'])
-      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
+      expect { @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
   end
 
   describe 'Methods' do
     context 'convert_time method' do
       it 'should convert time from HH:MMam to time object' do
-        expect(@controller.convert_time('10:00pm')).to eq(Time.new(2021,02,21,22,00))
+        expect(@controller.convert_time('10:00pm')).to eq(Time.new(2021, 0o2, 21, 22, 0o0))
       end
     end
   end
