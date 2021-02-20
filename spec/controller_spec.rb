@@ -3,7 +3,7 @@ require_relative '../lib/errors/event_already_exists'
 
 describe EventController do
   before(:each) do
-    @controller = EventController.new
+    @controller = EventController.new('./data/test.json')
   end
 
   it 'should be an instance of Event Controller' do
@@ -83,19 +83,20 @@ describe EventController do
       expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
 
-    xit 'should check that start time is not within another talk' do
-      talk_information[2] = 'not_time_format'
-      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
+    it 'should check that start time is not within another talk' do
+      @controller.create_talk(['test_event', 'Test Talk 2', '8:00am', '9:30am', 'test_speaker'])
+      pp @controller.events
+      expect{ @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
 
-    xit 'should check that finish time is not within another talk' do
-      talk_information[2] = 'not_time_format'
-      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
+    it 'should check that finish time is not within another talk' do
+      @controller.create_talk(['test_event', 'Test Talk 2', '8:00am', '9:30am', 'test_speaker'])
+      expect{ @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
 
-    xit 'should check that another event is not taking place within the start and finish time of a talk' do
-      talk_information[2] = 'not_time_format'
-      expect{@controller.create_event(talk_information)}.to raise_error(InvalidTalkInput)
+    it 'should check that another event is not taking place within the start and finish time of a talk' do
+      @controller.create_talk(['test_event', 'Test Talk 2', '9:10am', '9:30am', 'test_speaker'])
+      expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
   end
 

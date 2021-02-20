@@ -3,7 +3,7 @@ require 'json'
 
 describe Events do
   before(:each) do
-    @data = Events.new
+    @data = Events.new('./data/test.json')
   end
 
   it 'should be an instance of Data' do
@@ -39,14 +39,14 @@ describe Events do
     it 'should add talk to event' do
       @data.add_event('test_event')
       @data.add_speaker('test_speaker')
-      @data.add_talk('test_event', {title: 'test_talk', speaker: 'test_speaker', start_time: Time.now, finish_time: Time.now + 100})
+      @data.add_talk('test_event', {'title': 'test_talk', 'speaker': 'test_speaker', 'start_time': Time.now, 'finish_time': Time.now + 100})
       expect(@data.events['test_event'].last[:title]).to eq('test_talk')
     end
   end
 
   context 'JSON storage' do
     it 'should read the information in a json data file' do
-      data = JSON.parse(File.read('./data/event_data.json'))
+      data = JSON.parse(File.read('./data/test.json'))
       expect(@data.events).to include(data['events'])
     end
 

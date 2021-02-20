@@ -3,12 +3,13 @@ require_relative 'errors/invalid_command_error'
 require_relative 'errors/event_already_exists'
 require_relative 'errors/speaker_already_exists'
 require_relative 'errors/invalid_talk_input'
+require 'time'
 
 class EventController
   attr_reader :events
 
-  def initialize
-    @events = Events.new
+  def initialize(file_path)
+    @events = Events.new(file_path)
   end
 
   def run_app
@@ -62,19 +63,27 @@ class EventController
     raise InvalidTalkInput, 'That event does not exist' if @events.retrieve(event_name).nil?
     raise InvalidTalkInput, 'That speaker does not exist' unless @events.speakers.include?(speaker)
 
-    check_time(start_time, finish_time)
-    @events.add_talk(event_name, { title: talk_name, start_time: start_time, finish_time: finish_time, speaker: speaker })
-  end
-
-  def check_time(start, finish)
-    time_format = /b((1[0-2]|0?[1-9]):[0-5][0-9](am|pm))/
-    raise InvalidTalkInput, 'Invalid time format must be HH:MMam/pm' unless start.match?(time_format) || finish.match?(time_format)
-
-    start_time = convert_time(start)
-    finish_time = convert_time(finish)
-    if finish_time < start_time
-      raise InvalidTalkInput, 'Start time has to be before finish time.'
+    check_time_format(start_time, finish_time)
+    start = convert_time(start_time)
+    finish = convert_time(finish_time)
+    if finish < start
+      raise InvalidTalkInput, 'Start time has to be before finish time'
+    elsif !check_time_slot_available(event_name, start, finish)
+      raise InvalidTalkInput, 'Invalid time slot'
     end
+    @events.add_talk(event_name, { 'title'=> talk_name, 'start_time'=> start, 'finish_time'=> finish, 'speaker'=> speaker })
+  end
+  
+  def check_time_format(start, finish)
+    time_format = /(\b((1[0-2]|0?[1-9])|[1-9]):[0-5][0-9](am|pm))/
+    raise InvalidTalkInput, 'Invalid time format must be HH:MMam/pm' unless start.match?(time_format) && finish.match?(time_format)
+  end
+  
+  def check_time_slot_available(event,start,finish)
+    @events.retrieve(event).each do |talk|
+      return false if finish.between?(talk['start_time'], talk['finish_time']) || start.between?(talk['start_time'], talk['finish_time']) || talk['start_time'].between?(start,finish)
+    end
+    return true
   end
 
   def convert_time(time)
