@@ -35,7 +35,6 @@ describe EventController do
     it 'should check if an event already exists before adding it' do
       event_name = 'Test Event'
       @controller.create_event(event_name)
-      pp @controller.events
       expect { @controller.create_event(event_name) }.to raise_error(EventAlreadyExists)
     end
   end
