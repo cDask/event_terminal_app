@@ -1,4 +1,4 @@
-require_relative '../lib/controller'
+require_relative '../lib/event_controller'
 require_relative '../lib/errors/event_already_exists'
 
 describe EventController do
