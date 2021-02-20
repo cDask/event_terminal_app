@@ -10,7 +10,7 @@ class Events
   end
 
   def add_event(title)
-    @events[title] = {}
+    @events[title] = []
   end
 
   def retrieve(title)
@@ -37,4 +37,9 @@ class Events
   def add_speaker(name)
     @speakers << name
   end
+
+  def add_talk(event_name, talk_data)
+    @events[event_name] << talk_data
+  end
+
 end

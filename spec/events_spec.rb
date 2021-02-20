@@ -13,17 +13,18 @@ describe Events do
   it 'should have no data' do
     expect(@data.events).to eq({})
   end
-
-  it 'should add an event to the event hash' do
-    event_title = 'Main Event'
-    @data.add_event(event_title)
-    expect(@data.events[event_title]).to eq({})
-  end
-
-  it 'should be able to find a specific event' do
-    event_title = 'Test Event'
-    @data.add_event(event_title)
-    expect(@data.retrieve(event_title)).to eq({})
+  context 'Events' do
+    it 'should add an event to the event hash' do
+      event_title = 'Main Event'
+      @data.add_event(event_title)
+      expect(@data.events[event_title]).to eq([])
+    end
+  
+    it 'should be able to find a specific event' do
+      event_title = 'Test Event'
+      @data.add_event(event_title)
+      expect(@data.retrieve(event_title)).to eq([])
+    end
   end
 
   context 'Speakers' do
@@ -31,6 +32,15 @@ describe Events do
       speaker_name = 'John'
       @data.add_speaker(speaker_name)
       expect(@data.speakers).to include(speaker_name)
+    end
+  end
+
+  context 'Talks' do
+    it 'should add talk to event' do
+      @data.add_event('test_event')
+      @data.add_speaker('test_speaker')
+      @data.add_talk('test_event', {title: 'test_talk', speaker: 'test_speaker', start_time: Time.now, finish_time: Time.now + 100})
+      expect(@data.events['test_event'].last[:title]).to eq('test_talk')
     end
   end
 
