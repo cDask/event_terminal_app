@@ -39,8 +39,17 @@ describe Events do
     it 'should add talk to event' do
       @data.add_event('test_event')
       @data.add_speaker('test_speaker')
-      @data.add_talk('test_event', {'title': 'test_talk', 'speaker': 'test_speaker', 'start_time': Time.now, 'finish_time': Time.now + 100})
-      expect(@data.events['test_event'].last[:title]).to eq('test_talk')
+      @data.add_talk('test_event', {'title' => 'test_talk', 'speaker' => 'test_speaker', 'start_time' => Time.now, 'finish_time' => Time.now + 100})
+      expect(@data.events['test_event'].last['title']).to eq('test_talk')
+    end
+
+    it 'should sort talks in order of time' do
+      @data.add_event('test_event')
+      @data.add_speaker('test_speaker')
+      @data.add_talk('test_event', {'title' => 'test_talk', 'speaker' => 'test_speaker', 'start_time' => Time.new(2021,02,21,9,00), 'finish_time' => Time.new(2021,02,21,10,00)})
+      test_talk = {'title' => 'test_talk', 'speaker'=> 'test_speaker', 'start_time'=> Time.new(2021,02,21,8,00), 'finish_time' => Time.new(2021,02,21,8,50)}
+      @data.add_talk('test_event', test_talk)
+      expect(@data.events['test_event'][0]).to eq(test_talk)
     end
   end
 

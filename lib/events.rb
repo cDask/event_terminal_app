@@ -41,6 +41,8 @@ class Events
 
   def add_talk(event_name, talk_data)
     @events[event_name] << talk_data
+    @events[event_name].sort! do |a, b|
+      a['start_time'] <=> b['start_time']
+    end
   end
-
 end

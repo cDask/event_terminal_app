@@ -62,12 +62,10 @@ describe EventController do
 
     it 'should check that event exists' do
       talk_information[0] = 'no_event'
-      pp @controller.events.retrieve('no_event')
       expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
     
     it 'should check that speaker exists' do
-      pp talk_information
       talk_information[4] = 'no_speaker'
       expect{@controller.create_talk(talk_information)}.to raise_error(InvalidTalkInput)
     end
@@ -85,7 +83,6 @@ describe EventController do
 
     it 'should check that start time is not within another talk' do
       @controller.create_talk(['test_event', 'Test Talk 2', '8:00am', '9:30am', 'test_speaker'])
-      pp @controller.events
       expect{ @controller.create_talk(talk_information) }.to raise_error(InvalidTalkInput)
     end
 

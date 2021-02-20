@@ -39,7 +39,6 @@ class EventController
     first, second, *information = command
     case first
     when 'CREATE'
-      pp information
       check_data(second, information.length)
       process_create_command(second, information)
     when 'PRINT'
