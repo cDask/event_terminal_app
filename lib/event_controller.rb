@@ -17,20 +17,30 @@ class EventController
   def run_app
     command = process_arguments
     if command
-      process_command(command)
+      begin
+        process_command(command)
+      rescue StandardError => e
+        @view.print_error(e.message)
+      end
     else
-      loop do
-        begin
-          command = @view.request_command
-          if command[0] == 'EXIT'
-            close
-            exit
-          end
-          process_command(command)
-        rescue StandardError => e
-          @view.print_error(e.message)
-          retry
+      run_app_non_argument(command)
+    end
+  end
+
+  def run_app_non_argument(command)
+    loop do
+      begin
+        # TODO: use regex and scan for multiple instances of quotation marks
+        command = @view.request_command.split
+        if command[0] == 'EXIT'
+          close
+          exit
         end
+        command = format_command(command)
+        process_command(command)
+      rescue StandardError => e
+        @view.print_error(e.message)
+        retry
       end
     end
   end
@@ -138,6 +148,31 @@ class EventController
     raise StandardError, 'That event does not exist' unless event
 
     @view.print_event(event)
+  end
+
+  # TODO: replace this method with using scan and regex
+  def format_command(current_command)
+    new_command = []
+    quotation = nil
+    combine_command = ''
+    current_command.each do |command_string|
+      if command_string[0] == "'" || command_string[0] == '"'
+        quotation = command_string[0]
+        combine_command = command_string[1..-1]
+      elsif quotation
+        if command_string.chars.last == quotation
+          combine_command.concat(" #{command_string[0..-2]}")
+          quotation = nil
+          new_command << combine_command
+          combine_command = ''
+        else
+          combine_command.concat(" #{command_string}")
+        end
+      else
+        new_command << command_string
+      end
+    end
+    new_command
   end
 
   def close

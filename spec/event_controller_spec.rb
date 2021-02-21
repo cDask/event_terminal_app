@@ -103,5 +103,11 @@ describe EventController do
         expect(@controller.convert_time('10:00pm')).to eq(Time.new(2021, 0o2, 21, 22, 0o0))
       end
     end
+
+    context 'format command method' do
+      it 'should add command enclosed by quotations' do
+        expect(@controller.format_command(['test', "'hello", "world'"])).to eq(['test', 'hello world'])
+      end
+    end
   end
 end

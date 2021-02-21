@@ -1,1 +1,1 @@
-{"events":{"an_event":[{"title":"GREAT","start_time":"2021-02-21 20:00:00 +1100","finish_time":"2021-02-21 21:00:00 +1100","speaker":"Daniel"},{"title":"GREAT2","start_time":"2021-02-21 22:00:00 +1100","finish_time":"2021-02-21 23:00:00 +1100","speaker":"Daniel"}],"new_event":[{"title":"GREAT","start_time":"2021-02-21 22:00:00 +1100","finish_time":"2021-02-21 23:00:00 +1100","speaker":"Daniel"}]},"speakers":["Daniel"]}
+{"events":{},"speakers":[]}
