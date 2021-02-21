@@ -21,17 +21,14 @@ class Events
   def load_data(data_path)
     begin
       response = JSON.parse(File.read(data_path))
-      pp response
       response['events'].each do |_event, event_data|
         event_data.each do |talk|
-          pp talk
           talk['start_time'] = Time.parse(talk['start_time'])
           talk['finish_time'] = Time.parse(talk['finish_time'])
         end
       end
       response
     rescue Errno::ENOENT => exception
-      puts exception.message 
       File.open(data_path, 'w') do |f|
         f.write({ events: {}, speakers: [] }.to_json)
       end
